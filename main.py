@@ -86,7 +86,7 @@ async def rating_button(message: types.Message):
             score = scores[i][1]
             break
     if place == -1:
-        text += '\n\nВы еще не получили ни 1 балла, поэтомы вы не в рейтинге :('
+        text += '\n\nВы еще не получили ни 1 балла, поэтому вы не в рейтинге :('
     else:
         text += '\n\nВы на <b>' + str(place) + " месте</b> с количеством <b>баллов: " + str(score) + "</b>"
     await bot.send_message(message.chat.id, text,
