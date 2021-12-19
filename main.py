@@ -48,15 +48,19 @@ button_2 = types.KeyboardButton(text="Утверждения")
 keyboard.add(button_2)
 button_3 = types.KeyboardButton(text="Полезная информация")
 keyboard.add(button_3)
+button_4 = types.KeyboardButton(text="Рейтинг")
+keyboard.add(button_4)
 
 
-def add_score(id, score):
+def add_score(id, score, username_input):
     scores = cur.execute('SELECT scores FROM Rating WHERE chat_id= ?', (id,)).fetchone()
     if scores:
         cur.execute('UPDATE Rating SET scores= ? WHERE chat_id= ?', (scores[0] + score, id))
     else:
-        cur.execute('INSERT INTO Rating(chat_id, scores) VALUES (?, ?)', (id, score))
+        cur.execute('INSERT INTO Rating(chat_id, scores, username) VALUES (?, ?, ?)',
+                    (id, score, username_input))
     con.commit()
+
 
 @dp.message_handler(commands=['start'])
 async def start_func(message: types.Message):
@@ -65,10 +69,35 @@ async def start_func(message: types.Message):
                            reply_markup=keyboard)
 
 
+@dp.message_handler(Text(equals="Рейтинг"))
+async def rating_button(message: types.Message):
+    scores = cur.execute(
+        'SELECT username, scores, chat_id FROM Rating ORDER BY scores').fetchall()
+    text = '<b>!!! РЕЙТИНГ !!!</b>\n\nТоп 5 мест: \n'
+    for i in range(1, 6):
+        try:
+            text += str(i) + '. ' + scores[i - 1][0] + ' - ' + str(scores[i - 1][1]) + '\n'
+        except IndexError:
+            pass
+    place = -1
+    for i in range(len(scores)):
+        if scores[i][2] == message.chat.id:
+            place = i + 1
+            score = scores[i][1]
+            break
+    if place == -1:
+        text += '\n\nВы еще не получили ни 1 балла, поэтомы вы не в рейтинге :('
+    else:
+        text += '\n\nВы на <b>' + str(place) + " месте</b> с количеством <b>баллов: " + str(score) + "</b>"
+    await bot.send_message(message.chat.id, text,
+                           parse_mode='html', reply_markup=keyboard)
+
+
 @dp.message_handler(Text(equals="Полезная информация"))
 async def usefull_information(message: types.Message):
-    await bot.send_message(message.chat.id, "<b>!!! ПОЛЕЗНАЯ ИНФОРМАЦИЯ !!! </b>\n\n<i>Интересные факты: </i>\n 1. faktrus.ru/50-%D1%84%D0%B0%D0%BA%D1%82%D0%BE%D0%B2-%D0%BE-%D0%B1%D0%B0%D0%B9%D0%BA%D0%B0%D0%BB%D0%B5/ \n\n 2. https://fishki.net/mix/1736633-17-interesnyh-faktov-o-bajkale.html \n\n\n <i>Интересный видеоролик о Байкале - https://yandex.ru/video/preview/?filmId=15400220045413060661&from=tabbar&parent-reqid=1639921319164536-9422180006510794072-vla1-4631-vla-l7-balancer-8080-BAL-649&text=%D0%B1%D0%B0%D0%B9%D0%BA%D0%B0%D0%BB</i> \n\n\n Эта информация может пригодится вам при прохождении наших конкурсов!",
-          parse_mode='html', reply_markup=keyboard)
+    await bot.send_message(message.chat.id,
+                           "<b>!!! ПОЛЕЗНАЯ ИНФОРМАЦИЯ !!! </b>\n\n<i>Интересные факты: </i>\n 1. faktrus.ru/50-%D1%84%D0%B0%D0%BA%D1%82%D0%BE%D0%B2-%D0%BE-%D0%B1%D0%B0%D0%B9%D0%BA%D0%B0%D0%BB%D0%B5/ \n\n 2. https://fishki.net/mix/1736633-17-interesnyh-faktov-o-bajkale.html \n\n\n <i>Интересный видеоролик о Байкале - https://yandex.ru/video/preview/?filmId=15400220045413060661&from=tabbar&parent-reqid=1639921319164536-9422180006510794072-vla1-4631-vla-l7-balancer-8080-BAL-649&text=%D0%B1%D0%B0%D0%B9%D0%BA%D0%B0%D0%BB</i> \n\n\n Эта информация может пригодится вам при прохождении наших конкурсов!",
+                           parse_mode='html', reply_markup=keyboard)
 
 
 @dp.message_handler(Text(equals="Утверждения"))
@@ -89,9 +118,10 @@ async def fact_yes(message: types.Message):
     global random_fact
     if random_fact != '0':
         if facts[random_fact]:
-            add_score(message.chat.id, 1)
+            add_score(message.chat.id, 1, message.from_user.username)
             await bot.send_message(chat_id=message.chat.id,
-                                   text="Вы правы! Это верное утверждение!", reply_markup=keyboard)
+                                   text="Вы правы! Это верное утверждение!",
+                                   reply_markup=keyboard)
             await bot.send_message(chat_id=message.chat.id,
                                    text=zachisl_fact,
                                    reply_markup=keyboard)
@@ -106,9 +136,10 @@ async def fact_no(message: types.Message):
     global random_fact
     if random_fact != '0':
         if not facts[random_fact]:
-            add_score(message.chat.id, 1)
+            add_score(message.chat.id, 1, message.from_user.username)
             await bot.send_message(chat_id=message.chat.id,
-                                   text="Вы правы! Это неверное утверждение!", reply_markup=keyboard)
+                                   text="Вы правы! Это неверное утверждение!",
+                                   reply_markup=keyboard)
             await bot.send_message(chat_id=message.chat.id,
                                    text=zachisl_fact,
                                    reply_markup=keyboard)
@@ -138,7 +169,7 @@ async def ugadaika_yes(message: types.Message):
     global rand_photo
     if rand_photo != 100:
         if answers_ugadaika_system[rand_photo]:
-            add_score(message.chat.id, 3)
+            add_score(message.chat.id, 3, message.from_user.username)
             await message.reply(answers_ugadaika_user_yes[0], reply_markup=keyboard)
             await bot.send_message(chat_id=message.chat.id,
                                    text=zachisl_ugadaika,
@@ -152,7 +183,7 @@ async def ugadaika_no(message: types.Message):
     global rand_photo
     if rand_photo != 100:
         if not answers_ugadaika_system[rand_photo]:
-            add_score(message.chat.id, 3)
+            add_score(message.chat.id, 3, message.from_user.username)
             await message.reply(answers_ugadaika_user_no[rand_photo], reply_markup=keyboard)
             await bot.send_message(chat_id=message.chat.id,
                                    text=zachisl_ugadaika,
