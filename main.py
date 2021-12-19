@@ -62,6 +62,8 @@ def add_score(id, score, username_input):
         cur.execute('INSERT INTO Rating(chat_id, scores, username) VALUES (?, ?, ?)',
                     (id, score, username_input))
     con.commit()
+    cur.execute('UPDATE Rating SET username = ? WHERE chat_id = ?', (username_input, id))
+    con.commit()
 
 
 @dp.message_handler(commands=['start'])
@@ -73,6 +75,7 @@ async def start_func(message: types.Message):
 
 @dp.message_handler(Text(equals="Рейтинг"))
 async def rating_button(message: types.Message):
+    add_score(message.chat.id, 0, message.from_user.username)
     scores = cur.execute(
         'SELECT username, scores, chat_id FROM Rating ORDER BY scores DESC').fetchall()
     text = '<b>!!! РЕЙТИНГ !!!</b>\n\nТоп 5 мест: \n'
