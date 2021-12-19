@@ -54,7 +54,7 @@ async def start_func(message: types.Message):
 
 @dp.message_handler(Text(equals="Полезная информация"))
 async def usefull_information(message: types.Message):
-    await bot.send_message(message.chat.id, "<b>!!! ПОЛЕЗНАЯ ИНФОРМАЦИЯ !!! </b>\n\n<i>Интересные факты: </i>\n 1. faktrus.ru/50-%D1%84%D0%B0%D0%BA%D1%82%D0%BE%D0%B2-%D0%BE-%D0%B1%D0%B0%D0%B9%D0%BA%D0%B0%D0%BB%D0%B5/ \n 2. https://fishki.net/mix/1736633-17-interesnyh-faktov-o-bajkale.html \n\n\n <i>Интересный видеоролик о Байкале - https://yandex.ru/video/preview/?filmId=15400220045413060661&from=tabbar&parent-reqid=1639921319164536-9422180006510794072-vla1-4631-vla-l7-balancer-8080-BAL-649&text=%D0%B1%D0%B0%D0%B9%D0%BA%D0%B0%D0%BB</i> \n\n\n Эта информация может пригодится вам при прохождении наших конкурсов!",
+    await bot.send_message(message.chat.id, "<b>!!! ПОЛЕЗНАЯ ИНФОРМАЦИЯ !!! </b>\n\n<i>Интересные факты: </i>\n 1. faktrus.ru/50-%D1%84%D0%B0%D0%BA%D1%82%D0%BE%D0%B2-%D0%BE-%D0%B1%D0%B0%D0%B9%D0%BA%D0%B0%D0%BB%D0%B5/ \n\n 2. https://fishki.net/mix/1736633-17-interesnyh-faktov-o-bajkale.html \n\n\n <i>Интересный видеоролик о Байкале - https://yandex.ru/video/preview/?filmId=15400220045413060661&from=tabbar&parent-reqid=1639921319164536-9422180006510794072-vla1-4631-vla-l7-balancer-8080-BAL-649&text=%D0%B1%D0%B0%D0%B9%D0%BA%D0%B0%D0%BB</i> \n\n\n Эта информация может пригодится вам при прохождении наших конкурсов!",
           parse_mode='html', reply_markup=keyboard)
 
 
