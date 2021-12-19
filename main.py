@@ -37,7 +37,7 @@ facts = {'Байкал это самое глубокое озеро мира': 
          'В месте своего рождения на Байкале река Ангара имеет ширину 1 километр.': True}
 random_fact = '0'
 keyboard = types.ReplyKeyboardMarkup(one_time_keyboard=True)
-button_1 = types.KeyboardButton(text="Викторина")
+button_1 = types.KeyboardButton(text="Угадайка")
 keyboard.add(button_1)
 button_2 = types.KeyboardButton(text="Утверждения")
 keyboard.add(button_2)
@@ -95,7 +95,7 @@ async def fact_no(message: types.Message):
                                reply_markup=keyboard)
 
 
-@dp.message_handler(Text(equals="Викторина"))
+@dp.message_handler(Text(equals="Угадайка"))
 async def ugadaika_func(message: types.Message):
     global rand_photo
     rand_photo = random.randint(0, len(photos_ugadaika) - 1)
