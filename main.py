@@ -53,6 +53,8 @@ keyboard.add(button_4)
 
 
 def add_score(id, score, username_input):
+    if not username_input:
+        username_input = "Anonymous"
     scores = cur.execute('SELECT scores FROM Rating WHERE chat_id= ?', (id,)).fetchone()
     if scores:
         cur.execute('UPDATE Rating SET scores= ? WHERE chat_id= ?', (scores[0] + score, id))
@@ -72,7 +74,7 @@ async def start_func(message: types.Message):
 @dp.message_handler(Text(equals="Рейтинг"))
 async def rating_button(message: types.Message):
     scores = cur.execute(
-        'SELECT username, scores, chat_id FROM Rating ORDER BY scores').fetchall()
+        'SELECT username, scores, chat_id FROM Rating ORDER BY scores DESC').fetchall()
     text = '<b>!!! РЕЙТИНГ !!!</b>\n\nТоп 5 мест: \n'
     for i in range(1, 6):
         try:
