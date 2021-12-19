@@ -36,17 +36,17 @@ facts = {'Байкал это самое глубокое озеро мира': 
          'Из Байкала протекает две реки.': False,
          'В месте своего рождения на Байкале река Ангара имеет ширину 1 километр.': True}
 random_fact = '0'
+keyboard = types.ReplyKeyboardMarkup(one_time_keyboard=True)
+button_1 = types.KeyboardButton(text="Викторина")
+keyboard.add(button_1)
+button_2 = types.KeyboardButton(text="Утверждения")
+keyboard.add(button_2)
+button_3 = types.KeyboardButton(text="Полезная информация")
+keyboard.add(button_3)
 
 
 @dp.message_handler(commands=['start'])
 async def start_func(message: types.Message):
-    keyboard = types.ReplyKeyboardMarkup(one_time_keyboard=True)
-    button_1 = types.KeyboardButton(text="Викторина")
-    keyboard.add(button_1)
-    button_2 = types.KeyboardButton(text="Утверждения")
-    keyboard.add(button_2)
-    button_3 = types.KeyboardButton(text="Полезная информация")
-    keyboard.add(button_3)
     await bot.send_message(chat_id=message.chat.id,
                            text="Приветствуем вас в нашем боте, посвященном озеру Байкал! На выбор вам будут предоставлены различные поучительные игры и викторины.",
                            reply_markup=keyboard)
@@ -54,13 +54,6 @@ async def start_func(message: types.Message):
 
 @dp.message_handler(Text(equals="Полезная информация"))
 async def usefull_information(message: types.Message):
-    keyboard = types.ReplyKeyboardMarkup(one_time_keyboard=True)
-    button_1 = types.KeyboardButton(text="Викторина")
-    keyboard.add(button_1)
-    button_2 = types.KeyboardButton(text="Утверждения")
-    keyboard.add(button_2)
-    button_3 = types.KeyboardButton(text="Полезная информация")
-    keyboard.add(button_3)
     await bot.send_message(message.chat.id, "<b>!!! ПОЛЕЗНАЯ ИНФОРМАЦИЯ !!! </b>\n\n<i>Интересные факты: </i>\n 1. faktrus.ru/50-%D1%84%D0%B0%D0%BA%D1%82%D0%BE%D0%B2-%D0%BE-%D0%B1%D0%B0%D0%B9%D0%BA%D0%B0%D0%BB%D0%B5/ \n 2. https://fishki.net/mix/1736633-17-interesnyh-faktov-o-bajkale.html \n\n\n <i>Интересный видеоролик о Байкале - https://yandex.ru/video/preview/?filmId=15400220045413060661&from=tabbar&parent-reqid=1639921319164536-9422180006510794072-vla1-4631-vla-l7-balancer-8080-BAL-649&text=%D0%B1%D0%B0%D0%B9%D0%BA%D0%B0%D0%BB</i> \n\n\n Эта информация может пригодится вам при прохождении наших конкурсов!",
           parse_mode='html', reply_markup=keyboard)
 
@@ -68,24 +61,19 @@ async def usefull_information(message: types.Message):
 @dp.message_handler(Text(equals="Утверждения"))
 async def facts_func(message: types.Message):
     global random_fact
-    keyboard = types.ReplyKeyboardMarkup(one_time_keyboard=True)
+    keyboard2 = types.ReplyKeyboardMarkup(one_time_keyboard=True)
     button_1 = types.KeyboardButton(text="Да, это верное утверждение!")
-    keyboard.add(button_1)
+    keyboard2.add(button_1)
     button_2 = types.KeyboardButton(text="Нет, это не так!")
-    keyboard.add(button_2)
+    keyboard2.add(button_2)
     random_fact = random.choice(list(facts.keys()))
     await bot.send_message(chat_id=message.chat.id,
-                           text=random_fact, reply_markup=keyboard)
+                           text=random_fact, reply_markup=keyboard2)
 
 
 @dp.message_handler(Text(equals="Да, это верное утверждение!"))
 async def fact_yes(message: types.Message):
     global random_fact
-    keyboard = types.ReplyKeyboardMarkup(one_time_keyboard=True)
-    button_1 = types.KeyboardButton(text="Викторина")
-    keyboard.add(button_1)
-    button_2 = types.KeyboardButton(text="Утверждения")
-    keyboard.add(button_2)
     if facts[random_fact]:
         await bot.send_message(chat_id=message.chat.id,
                                text="Вы правы! Это верное утверждение!", reply_markup=keyboard)
@@ -98,11 +86,6 @@ async def fact_yes(message: types.Message):
 @dp.message_handler(Text(equals="Нет, это не так!"))
 async def fact_no(message: types.Message):
     global random_fact
-    keyboard = types.ReplyKeyboardMarkup(one_time_keyboard=True)
-    button_1 = types.KeyboardButton(text="Викторина")
-    keyboard.add(button_1)
-    button_2 = types.KeyboardButton(text="Утверждения")
-    keyboard.add(button_2)
     if not facts[random_fact]:
         await bot.send_message(chat_id=message.chat.id,
                                text="Вы правы! Это неверное утверждение!", reply_markup=keyboard)
@@ -117,24 +100,19 @@ async def ugadaika_func(message: types.Message):
     global rand_photo
     rand_photo = random.randint(0, len(photos_ugadaika) - 1)
     photo = InputFile(photos_ugadaika[rand_photo])
-    keyboard = types.ReplyKeyboardMarkup(one_time_keyboard=True)
+    keyboard2 = types.ReplyKeyboardMarkup(one_time_keyboard=True)
     button_1 = types.KeyboardButton(text="Да! Это Байкал!")
-    keyboard.add(button_1)
+    keyboard2.add(button_1)
     button_2 = "Нет! Это не Байкал!"
-    keyboard.add(button_2)
+    keyboard2.add(button_2)
     await bot.send_photo(
         caption='Перед вами находится фотография, определите какое это озеро!',
-        chat_id=message.chat.id, photo=photo, reply_markup=keyboard)
+        chat_id=message.chat.id, photo=photo, reply_markup=keyboard2)
 
 
 @dp.message_handler(Text(equals="Да! Это Байкал!"))
 async def ugadaika_yes(message: types.Message):
     global rand_photo
-    keyboard = types.ReplyKeyboardMarkup(one_time_keyboard=True)
-    button_1 = types.KeyboardButton(text="Викторина")
-    keyboard.add(button_1)
-    button_2 = types.KeyboardButton(text="Утверждения")
-    keyboard.add(button_2)
     if answers_ugadaika_system[rand_photo]:
         await message.reply(answers_ugadaika_user_yes[0], reply_markup=keyboard)
     else:
@@ -144,11 +122,6 @@ async def ugadaika_yes(message: types.Message):
 @dp.message_handler(Text(equals="Нет! Это не Байкал!"))
 async def ugadaika_no(message: types.Message):
     global rand_photo
-    keyboard = types.ReplyKeyboardMarkup(one_time_keyboard=True)
-    button_1 = types.KeyboardButton(text="Викторина")
-    keyboard.add(button_1)
-    button_2 = types.KeyboardButton(text="Утверждения")
-    keyboard.add(button_2)
     if not answers_ugadaika_system[rand_photo]:
         await message.reply(answers_ugadaika_user_no[rand_photo], reply_markup=keyboard)
     else:
