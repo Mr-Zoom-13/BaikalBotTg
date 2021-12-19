@@ -4,7 +4,10 @@ from aiogram.types import InputFile
 from aiogram.utils import executor
 from aiogram.dispatcher.filters import Text
 import random
+import sqlite3
 
+con = sqlite3.connect('data.db')
+cur = con.cursor()
 TOKEN = '5035911371:AAFzBDVpYqmfmoWTmChBMxwQLLDiZTYKJMw'
 bot = Bot(token=TOKEN)
 dp = Dispatcher(bot)
@@ -35,6 +38,8 @@ facts = {'Байкал это самое глубокое озеро мира': 
          'На Байкале происходят настоящие штормы, высота волн которых достигает 100-200 метров!': False,
          'Из Байкала протекает две реки.': False,
          'В месте своего рождения на Байкале река Ангара имеет ширину 1 километр.': True}
+zachisl_ugadaika = "Вам было зачислено +3 балла к Рейтингу!"
+zachisl_fact = "Вам было зачислено +1 балл к Рейтингу!"
 random_fact = '0'
 keyboard = types.ReplyKeyboardMarkup()
 button_1 = types.KeyboardButton(text="Угадайка")
@@ -44,6 +49,14 @@ keyboard.add(button_2)
 button_3 = types.KeyboardButton(text="Полезная информация")
 keyboard.add(button_3)
 
+
+def add_score(id, score):
+    scores = cur.execute('SELECT scores FROM Rating WHERE chat_id= ?', (id,)).fetchone()
+    if scores:
+        cur.execute('UPDATE Rating SET scores= ? WHERE chat_id= ?', (scores[0] + score, id))
+    else:
+        cur.execute('INSERT INTO Rating(chat_id, scores) VALUES (?, ?)', (id, score))
+    con.commit()
 
 @dp.message_handler(commands=['start'])
 async def start_func(message: types.Message):
@@ -76,8 +89,12 @@ async def fact_yes(message: types.Message):
     global random_fact
     if random_fact != '0':
         if facts[random_fact]:
+            add_score(message.chat.id, 1)
             await bot.send_message(chat_id=message.chat.id,
                                    text="Вы правы! Это верное утверждение!", reply_markup=keyboard)
+            await bot.send_message(chat_id=message.chat.id,
+                                   text=zachisl_fact,
+                                   reply_markup=keyboard)
         else:
             await bot.send_message(chat_id=message.chat.id,
                                    text="К сожалению нет! Это неверное утверждение!",
@@ -89,8 +106,12 @@ async def fact_no(message: types.Message):
     global random_fact
     if random_fact != '0':
         if not facts[random_fact]:
+            add_score(message.chat.id, 1)
             await bot.send_message(chat_id=message.chat.id,
                                    text="Вы правы! Это неверное утверждение!", reply_markup=keyboard)
+            await bot.send_message(chat_id=message.chat.id,
+                                   text=zachisl_fact,
+                                   reply_markup=keyboard)
         else:
             await bot.send_message(chat_id=message.chat.id,
                                    text="К сожалению нет! Это верное утверждение!",
@@ -117,7 +138,11 @@ async def ugadaika_yes(message: types.Message):
     global rand_photo
     if rand_photo != 100:
         if answers_ugadaika_system[rand_photo]:
+            add_score(message.chat.id, 3)
             await message.reply(answers_ugadaika_user_yes[0], reply_markup=keyboard)
+            await bot.send_message(chat_id=message.chat.id,
+                                   text=zachisl_ugadaika,
+                                   reply_markup=keyboard)
         else:
             await message.reply(answers_ugadaika_user_yes[rand_photo], reply_markup=keyboard)
 
@@ -127,7 +152,11 @@ async def ugadaika_no(message: types.Message):
     global rand_photo
     if rand_photo != 100:
         if not answers_ugadaika_system[rand_photo]:
+            add_score(message.chat.id, 3)
             await message.reply(answers_ugadaika_user_no[rand_photo], reply_markup=keyboard)
+            await bot.send_message(chat_id=message.chat.id,
+                                   text=zachisl_ugadaika,
+                                   reply_markup=keyboard)
         else:
             await message.reply(answers_ugadaika_user_no[0], reply_markup=keyboard)
 
