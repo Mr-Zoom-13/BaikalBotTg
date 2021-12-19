@@ -74,25 +74,27 @@ async def facts_func(message: types.Message):
 @dp.message_handler(Text(equals="Да, это верное утверждение!"))
 async def fact_yes(message: types.Message):
     global random_fact
-    if facts[random_fact]:
-        await bot.send_message(chat_id=message.chat.id,
-                               text="Вы правы! Это верное утверждение!", reply_markup=keyboard)
-    else:
-        await bot.send_message(chat_id=message.chat.id,
-                               text="К сожалению нет! Это неверное утверждение!",
-                               reply_markup=keyboard)
+    if random_fact != '0':
+        if facts[random_fact]:
+            await bot.send_message(chat_id=message.chat.id,
+                                   text="Вы правы! Это верное утверждение!", reply_markup=keyboard)
+        else:
+            await bot.send_message(chat_id=message.chat.id,
+                                   text="К сожалению нет! Это неверное утверждение!",
+                                   reply_markup=keyboard)
 
 
 @dp.message_handler(Text(equals="Нет, это не так!"))
 async def fact_no(message: types.Message):
     global random_fact
-    if not facts[random_fact]:
-        await bot.send_message(chat_id=message.chat.id,
-                               text="Вы правы! Это неверное утверждение!", reply_markup=keyboard)
-    else:
-        await bot.send_message(chat_id=message.chat.id,
-                               text="К сожалению нет! Это верное утверждение!",
-                               reply_markup=keyboard)
+    if random_fact != '0':
+        if not facts[random_fact]:
+            await bot.send_message(chat_id=message.chat.id,
+                                   text="Вы правы! Это неверное утверждение!", reply_markup=keyboard)
+        else:
+            await bot.send_message(chat_id=message.chat.id,
+                                   text="К сожалению нет! Это верное утверждение!",
+                                   reply_markup=keyboard)
 
 
 @dp.message_handler(Text(equals="Угадайка"))
@@ -113,19 +115,21 @@ async def ugadaika_func(message: types.Message):
 @dp.message_handler(Text(equals="Да! Это Байкал!"))
 async def ugadaika_yes(message: types.Message):
     global rand_photo
-    if answers_ugadaika_system[rand_photo]:
-        await message.reply(answers_ugadaika_user_yes[0], reply_markup=keyboard)
-    else:
-        await message.reply(answers_ugadaika_user_yes[rand_photo], reply_markup=keyboard)
+    if rand_photo != 100:
+        if answers_ugadaika_system[rand_photo]:
+            await message.reply(answers_ugadaika_user_yes[0], reply_markup=keyboard)
+        else:
+            await message.reply(answers_ugadaika_user_yes[rand_photo], reply_markup=keyboard)
 
 
 @dp.message_handler(Text(equals="Нет! Это не Байкал!"))
 async def ugadaika_no(message: types.Message):
     global rand_photo
-    if not answers_ugadaika_system[rand_photo]:
-        await message.reply(answers_ugadaika_user_no[rand_photo], reply_markup=keyboard)
-    else:
-        await message.reply(answers_ugadaika_user_no[0], reply_markup=keyboard)
+    if rand_photo != 100:
+        if not answers_ugadaika_system[rand_photo]:
+            await message.reply(answers_ugadaika_user_no[rand_photo], reply_markup=keyboard)
+        else:
+            await message.reply(answers_ugadaika_user_no[0], reply_markup=keyboard)
 
 
 if __name__ == '__main__':
