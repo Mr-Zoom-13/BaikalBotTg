@@ -6,14 +6,17 @@ from aiogram.dispatcher.filters import Text
 import random
 import sqlite3
 
-con = sqlite3.connect('data.db')
+con = sqlite3.connect('db/data.db')
 cur = con.cursor()
-TOKEN = '5035911371:AAFzBDVpYqmfmoWTmChBMxwQLLDiZTYKJMw'
+TOKEN = '5410504070:AAGkdZ8_q9PBvYEVxhrXFoI0y06AwEBxdCw'
 bot = Bot(token=TOKEN)
 dp = Dispatcher(bot)
-photos_ugadaika = ['baikal-1.jpg', 'baikal-1.jpg', 'baikal-1.jpg', 'baikal-1.jpg',
-                   'ilmen-1.jpg', 'ilmen-2.jpg', 'ladoga-1.jpg', 'ladoga-2.jpg', 'chani-1.jpg',
-                   'chani-2.jpg']
+photos_ugadaika = ['static/img/baikal-1.jpg', 'static/img/baikal-1.jpg',
+                   'static/img/baikal-1.jpg', 'static/img/baikal-1.jpg',
+                   'static/img/ilmen-1.jpg', 'static/img/ilmen-2.jpg',
+                   'static/img/ladoga-1.jpg', 'static/img/ladoga-2.jpg',
+                   'static/img/chani-1.jpg',
+                   'static/img/chani-2.jpg']
 answers_ugadaika_system = [True, True, True, True, False, False, False, False, False, False]
 answers_ugadaika_user_yes = {0: 'Да, это Байкал, верно! Молодец!',
                              4: 'К сожалению нет! Это озеро Ильмень!',
@@ -93,7 +96,8 @@ async def rating_button(message: types.Message):
     if place == -1:
         text += '\n\nВы еще не получили ни 1 балла, поэтому вы не в рейтинге :('
     else:
-        text += '\n\nВы на <b>' + str(place) + " месте</b> с количеством <b>баллов: " + str(score) + "</b>"
+        text += '\n\nВы на <b>' + str(place) + " месте</b> с количеством <b>баллов: " + str(
+            score) + "</b>"
     await bot.send_message(message.chat.id, text,
                            parse_mode='html', reply_markup=keyboard)
 
